@@ -54,7 +54,7 @@ func AuthorizeNoFace(c *gin.Context) {
 	}
 
 	// Pass the extracted claims to the next handler
-	c.Set("id", claims["id"])
+	c.Set("id", int(claims["id"].(float64)))
 	c.Set("face", claims["face"])
 
 	c.Next()

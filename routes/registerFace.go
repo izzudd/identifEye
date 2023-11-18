@@ -27,8 +27,8 @@ func RegisterFaceHandler(c *gin.Context) {
 		return
 	}
 
-	dateTime := time.Now().Format("2006-01-02_15-04-05")
-	saveDir := filepath.Join(fmt.Sprint(1), os.Getenv("IMAGE_PATH"), "register", dateTime)
+	dateTime := time.Now().Format("2006-01-02")
+	saveDir := filepath.Join(os.Getenv("IMAGE_PATH"), "register", dateTime, c.GetString("username"))
 
 	for i, file := range files {
 		err := saveFile(file, saveDir, fmt.Sprintf("%d.jpg", i))

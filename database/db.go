@@ -3,11 +3,13 @@ package database
 import (
 	"identifEye/entity"
 	"log"
+	"sync"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+var once sync.Once
 var db *gorm.DB
 
 func Init() {
@@ -18,11 +20,10 @@ func Init() {
 	}
 
 	db.AutoMigrate(&entity.User{})
+	db.Debug()
 }
 
 func Get() *gorm.DB {
-	if db == nil {
-		Init()
-	}
+	once.Do(Init)
 	return db
 }

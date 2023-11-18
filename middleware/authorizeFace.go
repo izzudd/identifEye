@@ -15,5 +15,6 @@ func AuthorizeFace(c *gin.Context) {
 		return
 	}
 
+	print("userid", c.GetInt("id"))
 	c.Next()
 }

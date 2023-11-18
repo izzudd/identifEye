@@ -26,7 +26,7 @@ func LoginFaceHandler(c *gin.Context) {
 	}
 
 	dateTime := time.Now().Format("2006-01-02_15-04-05")
-	saveDir := filepath.Join(fmt.Sprint(1), os.Getenv("IMAGE_PATH"), "login", dateTime)
+	saveDir := filepath.Join(os.Getenv("IMAGE_PATH"), "login", fmt.Sprint(c.GetInt("id")), dateTime)
 
 	for i, file := range files {
 		err := saveFile(file, saveDir, fmt.Sprintf("%d.jpg", i))
@@ -36,7 +36,7 @@ func LoginFaceHandler(c *gin.Context) {
 		}
 	}
 
-	payloads := jwt.MapClaims{"id": c.GetString("username"), "face": true}
+	payloads := jwt.MapClaims{"id": c.GetInt("id"), "face": true}
 	token, err := utils.GenerateJWT(payloads)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": STATUS_ERROR, "message": "Failed to generate JWT"})

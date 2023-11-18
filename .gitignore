@@ -12,4 +12,5 @@ devenv.local.nix
 .env
 .venv
 *.db
+uploads
 
