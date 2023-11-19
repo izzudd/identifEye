@@ -21,8 +21,13 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type"}
+
 	r.Use(gin.Logger())
+	r.Use(cors.New(config))
 
 	r.POST("/register", routes.RegisterHandler)
 	r.POST("/register/face", middleware.AuthorizeRegister, routes.RegisterFaceHandler)
