@@ -6,6 +6,7 @@ import (
 	"identifEye/database"
 	"identifEye/entity"
 	"identifEye/utils"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -44,7 +45,8 @@ func LoginFaceHandler(c *gin.Context) {
 
 	similarity, err := getSimilarityScore(c.GetInt("id"), saveDir)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": STATUS_ERROR, "message": "Failed to process faces"})
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"status": STATUS_FAILED, "message": "Face not detected"})
 		return
 	}
 

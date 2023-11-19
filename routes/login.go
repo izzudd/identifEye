@@ -41,5 +41,5 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"status": STATUS_SUCCESS, "token": token})
+	c.JSON(http.StatusOK, gin.H{"status": STATUS_SUCCESS, "token": token})
 }
