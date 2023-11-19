@@ -20,7 +20,6 @@ def main():
     exit(1)
 
   # TODO: validate embedding
-  print(embeddings.shape)
 
   try:
     conn, cursor = db_connection()

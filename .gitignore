@@ -13,5 +13,7 @@ devenv.local.nix
 .venv
 *.db
 uploads
-model/__pycache__
+__pycache__
 
+training/dataset/*
+lightning_logs

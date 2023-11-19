@@ -4,8 +4,8 @@ import torch
 from PIL import Image
 from facenet_pytorch import MTCNN, InceptionResnetV1
 
-mtcnn = MTCNN(margin=10)
-generate_embedding = InceptionResnetV1(pretrained='vggface2').eval()
+mtcnn = MTCNN(margin=5)
+generate_embedding = InceptionResnetV1(pretrained='casia-webface').eval()
 
 def read_image(path):
   image = Image.open(path)
