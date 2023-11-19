@@ -10,8 +10,8 @@
   packages = [ 
     pkgs.git 
     pkgs.gcc 
-    # pkgs.stdenv.cc.cc.lib 
-    # pkgs.zlib
+    pkgs.stdenv.cc.cc.lib 
+    pkgs.zlib
   ];
 
   # https://devenv.sh/scripts/
@@ -30,8 +30,8 @@
     enable = true;
     venv.enable = true;
     venv.requirements = ''
-      # scikit-learn
-      # facenet-pytorch
+      scikit-learn
+      facenet-pytorch
     '';
   };
 
