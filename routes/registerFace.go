@@ -1,12 +1,15 @@
 package routes
 
 import (
+	"bytes"
 	"fmt"
 	"identifEye/database"
 	"identifEye/entity"
 	"identifEye/utils"
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -38,11 +41,19 @@ func RegisterFaceHandler(c *gin.Context) {
 		}
 	}
 
+	userKey, _ := utils.GenerateRandomString(16)
+	if err := processImageEmbeddings(userKey, saveDir); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"status": STATUS_FAILED, "message": "Cannot detect faces"})
+		return
+	}
+
 	newUser := entity.User{
 		Username: c.GetString("username"),
 		Password: c.GetString("password"),
 		Name:     c.GetString("name"),
 		Email:    c.GetString("email"),
+		Key:      userKey,
 	}
 	if result := database.Get().Create(&newUser); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": STATUS_ERROR, "message": "Failed to create new user"})
@@ -57,4 +68,19 @@ func RegisterFaceHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"status": STATUS_SUCCESS, "token": token})
+}
+
+func processImageEmbeddings(key string, imagePath string) error {
+	scriptPath := filepath.Join(".", "model", "register.py")
+	imageAbsolutePath, _ := filepath.Abs(imagePath)
+
+	cmd := exec.Command("python", scriptPath, key, imageAbsolutePath)
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("%s, %s", err.Error(), stdout.String())
+	}
+
+	return nil
 }

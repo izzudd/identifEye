@@ -13,4 +13,5 @@ devenv.local.nix
 .venv
 *.db
 uploads
+model/__pycache__
 

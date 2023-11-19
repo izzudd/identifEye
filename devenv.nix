@@ -2,10 +2,12 @@
 
 {
   # https://devenv.sh/basics/
-  env.GREET = "devenv";
+  env = {
+    GREET = "devenv";
+  };
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.zlib pkgs.gcc ];
+  packages = [ pkgs.git pkgs.zlib pkgs.glibc pkgs.stdenv.cc.cc.lib ];
 
   # https://devenv.sh/scripts/
   scripts.hello.exec = "echo hello from $GREET";
@@ -23,8 +25,8 @@
     enable = true;
     venv.enable = true;
     venv.requirements = ''
-      numpy
-      # facenet-pytorch
+      scikit-learn
+      facenet-pytorch
     '';
   };
 

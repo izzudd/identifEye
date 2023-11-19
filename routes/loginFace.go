@@ -1,11 +1,17 @@
 package routes
 
 import (
+	"bytes"
 	"fmt"
+	"identifEye/database"
+	"identifEye/entity"
 	"identifEye/utils"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +42,20 @@ func LoginFaceHandler(c *gin.Context) {
 		}
 	}
 
+	similarity, err := getSimilarityScore(c.GetInt("id"), saveDir)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": STATUS_ERROR, "message": "Failed to process faces"})
+		return
+	}
+
+	treshold, _ := strconv.ParseFloat(os.Getenv("SIMILARITY_TRESHOLD"), 32)
+	if similarity < float32(treshold) {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": STATUS_FAILED, "message": "Face does not match", "data": gin.H{
+			"similarity": similarity,
+		}})
+		return
+	}
+
 	payloads := jwt.MapClaims{"id": c.GetInt("id"), "face": true}
 	token, err := utils.GenerateJWT(payloads)
 	if err != nil {
@@ -43,5 +63,27 @@ func LoginFaceHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": STATUS_SUCCESS, "token": token})
+	c.JSON(http.StatusOK, gin.H{"status": STATUS_SUCCESS, "token": token, "data": gin.H{
+		"similarity": similarity,
+	}})
+}
+
+func getSimilarityScore(userId int, imagePath string) (float32, error) {
+	var user entity.User
+	database.Get().First(&user, userId)
+
+	scriptPath := filepath.Join(".", "model", "detect.py")
+	imageAbsolutePath, _ := filepath.Abs(imagePath)
+
+	cmd := exec.Command("python", scriptPath, user.Key, imageAbsolutePath)
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+
+	if err := cmd.Run(); err != nil {
+		return -1, fmt.Errorf("%s, %s", err.Error(), stdout.String())
+	}
+
+	stringNum := strings.TrimRight(strings.Split(stdout.String(), ": ")[1], "\n")
+	similarity, err := strconv.ParseFloat(stringNum, 32)
+	return float32(similarity), err
 }
