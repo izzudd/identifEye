@@ -7,7 +7,7 @@
   };
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.zlib pkgs.glibc pkgs.stdenv.cc.cc.lib ];
+  packages = [ pkgs.git pkgs.gcc pkgs.stdenv.cc.cc.lib pkgs.zlib ];
 
   # https://devenv.sh/scripts/
   scripts.hello.exec = "echo hello from $GREET";
