@@ -7,7 +7,12 @@
   };
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git pkgs.gcc pkgs.stdenv.cc.cc.lib pkgs.zlib ];
+  packages = [ 
+    pkgs.git 
+    pkgs.gcc 
+    # pkgs.stdenv.cc.cc.lib 
+    # pkgs.zlib
+  ];
 
   # https://devenv.sh/scripts/
   scripts.hello.exec = "echo hello from $GREET";
@@ -25,8 +30,8 @@
     enable = true;
     venv.enable = true;
     venv.requirements = ''
-      scikit-learn
-      facenet-pytorch
+      # scikit-learn
+      # facenet-pytorch
     '';
   };
 

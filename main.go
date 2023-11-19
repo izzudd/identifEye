@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -19,6 +20,8 @@ func main() {
 	database.Init()
 
 	r := gin.Default()
+
+	r.Use(cors.Default())
 	r.Use(gin.Logger())
 
 	r.POST("/register", routes.RegisterHandler)
