@@ -19,8 +19,6 @@ def main():
     sys.stdout.flush()
     exit(1)
 
-  # TODO: validate embedding
-
   try:
     conn, cursor = db_connection()
     insert_embeddings(cursor, sys.argv[1], embeddings)

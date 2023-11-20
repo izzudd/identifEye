@@ -17,3 +17,5 @@ __pycache__
 
 training/dataset/*
 lightning_logs
+images
+weight

@@ -8,7 +8,7 @@ from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 import torch.nn.functional as F
 from torchvision import models
 
-from dataset import get_datalaoder
+from dataset import get_dataloader
 
 def metric(anchor, positive, negative):
   positive_distance = F.cosine_similarity(anchor, positive)
@@ -22,9 +22,10 @@ def metric(anchor, positive, negative):
   return sim_score, dis_score, delta_score
 
 class TripletModel(pl.LightningModule):
-  def __init__(self) -> None:
+  def __init__(self):
     super().__init__()
-    self.model = models.resnet50(num_classes=128)
+    self.model = models.inception_v3(aux_logits=False)
+    self.model.fc = nn.Linear(2048, 128)
     self.criterion = nn.TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y))
     self.lr = 1e-5
 
@@ -67,10 +68,10 @@ class TripletModel(pl.LightningModule):
 if __name__ == '__main__':
   torch.set_float32_matmul_precision('high')
 
-  train, test = get_datalaoder(num_workers=6, batch_size=16)
+  train, test = get_dataloader(num_workers=6, batch_size=12)
   model = TripletModel()
 
-  trainer = Trainer(max_epochs=100, devices=-1, callbacks=[
+  trainer = Trainer(max_epochs=300, devices=-1, callbacks=[
     EarlyStopping(monitor="val_loss", mode="min", patience=30)
   ])
 
